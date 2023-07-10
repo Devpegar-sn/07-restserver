@@ -3,9 +3,70 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Acceso denegado</title>
+    <meta
+      name="google-signin-client_id"
+      content="820632741915-kubrf0dm12b9s29vh78igcob9ubt7mja.apps.googleusercontent.com"
+    />
+    <title>Google Sign-In</title>
   </head>
   <body>
-    <h1>Acceso denegado</h1>
+    <h1>Google Sign-In</h1>
+    <hr />
+
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+
+    <div
+      id="g_id_onload"
+      data-client_id="820632741915-kubrf0dm12b9s29vh78igcob9ubt7mja.apps.googleusercontent.com"
+      data-context="signin"
+      data-ux_mode="popup"
+      data-login_uri="localhost"
+      data-itp_support="true"
+      data-callback="handleCredentialResponse"
+    ></div>
+
+    <div
+      class="g_id_signin"
+      data-type="standard"
+      data-shape="pill"
+      data-theme="outline"
+      data-text="signup_with"
+      data-size="large"
+      data-logo_alignment="left"
+    ></div>
+
+    <script>
+      var url = window.location.hostname.includes("localhost")
+        ? "http://localhost:8080/api/auth/google"
+        : "https://restserver-curso-node-fer-011f4288f11b.herokuapp.com/api/auth/google";
+
+      function handleCredentialResponse(response) {
+        var id_token = response.credential;
+        const data = { id_token };
+
+        fetch(url, {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify(data),
+        })
+          .then((resp) => resp.json())
+          .then((data) => console.log("Nuestro servidor", data))
+          .catch(console.log);
+        console.log("Encoded JWT ID token: " + id_token);
+      }
+      // window.onload = function () {
+      //   google.accounts.id.initialize({
+      //     client_id:
+      //       "820632741915-kubrf0dm12b9s29vh78igcob9ubt7mja.apps.googleusercontent.com",
+      //     callback: handleCredentialResponse,
+      //   });
+      //   google.accounts.id.renderButton(
+      //     document.getElementById("buttonDiv"),
+      //     { theme: "filled_blue", size: "large", shape: "pill" } // customization attributes
+      //   );
+      //   google.accounts.id.prompt(); // also display the One Tap dialog
+      // };
+    </script>
+    <!-- <div id="buttonDiv"></div> -->
   </body>
 </html>
